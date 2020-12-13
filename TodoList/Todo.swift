@@ -18,12 +18,14 @@ struct Todo: Codable, Equatable {
     
     mutating func update(isDone: Bool, detail: String, isToday: Bool) {
         // TODO: update 로직 추가
-        
+        self.isDone = isDone
+        self.detail = detail
+        self.isToday = isToday
     }
     
     static func == (lhs: Self, rhs: Self) -> Bool {
         // TODO: 동등 조건 추가
-        return true
+        return lhs.id == rhs.id
     }
 }
 
@@ -42,16 +44,28 @@ class TodoManager {
     
     func addTodo(_ todo: Todo) {
         //TODO: add로직 추가
+        todos.append(todo)
+        saveTodo()
     }
     
     func deleteTodo(_ todo: Todo) {
         //TODO: delete 로직 추가
+//        todos = todos.filter { existingTodo in. => 이 코드를 줄이면 밑에 코드처럼 된다.
+//            return existingTodo.id != todo.id
+//        }
         
+        todos = todos.filter { $0.id != todo.id }
+//        if let index = todos.firstIndex(of: todo) {  => 알고리즘 적으로 조금 더 효율적인 코드지만 데이터가 많은게 아니라서 크게 차이 없을것이다.
+//            todos.remove(at: index)
+//        }
+        saveTodo()
     }
     
     func updateTodo(_ todo: Todo) {
         //TODO: updatee 로직 추가
-        
+        guard let index = todos.firstIndex(of: todo) else { return }
+        todos[index].update(isDone: todo.isDone, detail: todo.detail, isToday: todo.isToday)
+        saveTodo()
     }
     
     func saveTodo() {
